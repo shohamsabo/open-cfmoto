@@ -70,8 +70,21 @@ class PxcHandshake(
             }
             // First-class: never empty-ack 0x10600 (→ 1970 / 00:00 on Morini/Voge/QJ).
             // Echo-only (2.0.10): do not push an unsolicited 0x10601 — Griffin / X-Cape / Voge
-            // ignore it or jump hours. 0x10450 stays on the profile unknown path (empty cmd+1).
+            // ignore it or jump hours.
             PxcFrame.CMD_HU_TIME_SYNC -> onHuTimeSync(tag, frame, out)
+            // Voge/Morini experiment: the MLN dash asks for time with an empty 0x10450.
+            // The generic profile path answers with an empty 0x10451, and field testing shows that
+            // this resets only the hour to 00 while the dash's own minutes keep running correctly.
+            // For this profile, consume the query without replying so the dash can preserve its
+            // internal wall clock. Other profiles retain the existing cmd+1 behaviour unchanged.
+            PxcFrame.CMD_HU_QUERY_TIME -> {
+                if (profile === MoriniMlSoftApProfile) {
+                    log("[$tag] HU_QUERY_TIME ignored for Morini/Voge experiment — preserving dash clock")
+                } else if (!profile.handleUnknownControl(tag, frame, out, log)) {
+                    log("[$tag] cmd=0x${frame.cmd.toUInt().toString(16)} (${PxcFrame.nameOf(frame.cmd)}) " +
+                        "len=${frame.payload.size} ${frame.payload.asText()}")
+                }
+            }
             else -> {
                 if (!profile.handleUnknownControl(tag, frame, out, log)) {
                     log("[$tag] cmd=0x${frame.cmd.toUInt().toString(16)} (${PxcFrame.nameOf(frame.cmd)}) " +
@@ -104,10 +117,7 @@ class PxcHandshake(
 
         profile = BikeProfiles.select(json, log)
         val early = BikeProfileHolder.active
-        val startedSpec = BikeProfileHolder.aaVideo  // what Android Auto actually started / negotiated with
-        // Keep a measured landscape panel (e.g. 800MT 1280×576) when CLIENT_INFO scoring would
-        // flip to the near-square 800NK Advanced profile — that mis-route resized touch/margins
-        // mid-session while AA stayed on the landscape stream (connect/drop flaps in field logs).
+        val startedSpec = BikeProfileHolder.aaVideo
         val earlyPanel = early.panelSize
         val earlyIsWide = earlyPanel != null && earlyPanel.first >= earlyPanel.second * 3 / 2
         if (earlyIsWide && profile === Cfdl26NkTouchProfile) {
@@ -119,13 +129,7 @@ class PxcHandshake(
             log("[$tag] profile refined from QR guess '${early.name}' → CLIENT_INFO '${profile.name}' " +
                 "(AA already started at the QR-guess resolution)")
         }
-        BikeProfileHolder.active = profile  // authoritative; QR modelId was only the early hint
-        // Android Auto's video surface + decoder buffer were sized when AA started (from the QR guess)
-        // and CANNOT be resized mid-session. If the refined profile wants a different resolution and no
-        // explicit override is in effect, pin the spec to what AA is really running: otherwise the
-        // compositor scales the live source (e.g. 800x480) as if it were the profile's (e.g. 720x1280),
-        // producing a wildly wrong draw rect and a picture the dash rejects — which drops the link every
-        // few seconds (the connect/drop flap). Known/consistent bikes hit no-op here.
+        BikeProfileHolder.active = profile
         if (BikeProfileHolder.aaVideoOverride == null && BikeProfileHolder.aaVideo != startedSpec) {
             BikeProfileHolder.aaVideoOverride = startedSpec
             log("[$tag] pinned AA video to ${startedSpec.width}x${startedSpec.height} " +
@@ -142,9 +146,7 @@ class PxcHandshake(
         val text = frame.payload.asText()
         log("[$tag] CHECK_SN from bike: $text")
         val sn = try { JSONObject(text).optString("sn") } catch (e: Exception) { "" }
-        // ack the request frame
         PxcFrame(PxcFrame.CMD_CHECK_SN_ACK, ByteArray(0)).write(out)
-        // send the result
         val result = JSONObject().apply {
             put("isOk", true)
             put("errCode", 0)
