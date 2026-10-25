@@ -37,7 +37,7 @@ object AppSettings {
     private const val KEY_ISOLATION_TEST = "shoham_isolation_test"
     fun isolationTest(ctx: Context): Int = prefs(ctx).getInt(KEY_ISOLATION_TEST, 0)
     fun setIsolationTest(ctx: Context, test: Int) {
-        require(test == 0 || test in 8..12)
+        require(test == 0 || test in 8..16)
         prefs(ctx).edit().putInt(KEY_ISOLATION_TEST, test).apply()
         ClockLab.isolationTest = test
     }
