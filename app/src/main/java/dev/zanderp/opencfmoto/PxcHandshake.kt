@@ -21,7 +21,6 @@ class PxcHandshake(
     private val log: (String) -> Unit,
 ) {
     // Diagnostic build: suppress only time replies; keep Android Auto and PXC handshake intact.
-    private val isolateClockReplies = true
     private val phoneUuid: String = UUID.randomUUID().toString()
     @Volatile var carHuid: String? = null
         private set
@@ -74,14 +73,19 @@ class PxcHandshake(
             // Clock lab: knobs choose 0x10600 echo vs phone and 0x10451
             // empty / Carbit / Zontes / no-ack. Defaults match Latest 2.0.13.
             PxcFrame.CMD_HU_TIME_SYNC -> {
-                if (isolateClockReplies) log("[$tag] [VOGE-CLOCK-ISOLATION] RX 0x10600 len=${frame.payload.size}; TX 0x10601 suppressed")
+                if (ClockLab.timeSync == ClockTimeSyncMode.NO_ACK) log("[$tag] [VOGE-LAB] RX 0x10600 len=${frame.payload.size}; TX 0x10601 suppressed")
                 else onHuTimeSync(tag, frame, out)
             }
             PxcFrame.CMD_HU_QUERY_TIME -> {
-                if (isolateClockReplies) log("[$tag] [VOGE-CLOCK-ISOLATION] RX 0x10450 len=${frame.payload.size}; TX 0x10451 suppressed")
+                if (ClockLab.query == ClockQueryMode.NO_ACK) onHuQueryTime(tag, frame, out)
                 else onHuQueryTime(tag, frame, out)
             }
             else -> {
+                if ((frame.cmd == 0x10630 && ClockLab.suppress10630) ||
+                    (frame.cmd == 0x10740 && ClockLab.suppress10740)) {
+                    log("[$tag] [VOGE-LAB] RX 0x${frame.cmd.toString(16)} len=${frame.payload.size}; response suppressed")
+                    return
+                }
                 if (!profile.handleUnknownControl(tag, frame, out, log)) {
                     log("[$tag] cmd=0x${frame.cmd.toUInt().toString(16)} (${PxcFrame.nameOf(frame.cmd)}) " +
                         "len=${frame.payload.size} ${frame.payload.asText()}")
