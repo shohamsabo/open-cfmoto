@@ -50,7 +50,7 @@ object ClockLab {
     @Volatile var suppress10630: Boolean = false
     @Volatile var suppress10740: Boolean = false
     @Volatile var freezeQrProfile: Boolean = false
-    /** 0=normal, 8=Wi-Fi only, 9=PXC no frames, 10=15s frame delay, 11=limited optional control, 12=normal trace. */
+    /** 0=normal, 8=Wi-Fi only, 9=PXC no frames, 10=15s frame delay, 11=limited optional control, 12=normal trace, 13=no frames, 14=one frame, 15=ten frames, 16=video with post-first-frame optional control suppression. */
     @Volatile var isolationTest: Int = 0
     @Volatile var isolationStartMs: Long = 0L
 
