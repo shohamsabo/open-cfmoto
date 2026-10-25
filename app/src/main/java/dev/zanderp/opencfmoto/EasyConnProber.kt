@@ -802,10 +802,22 @@ class EasyConnProber(
                 // initial IDR is already gone from the queue, so without this the dash starts mid-GOP
                 // on a P-frame and stays black. See VideoPipeline.onBikeDataStart().
                 video?.onBikeDataStart()
-                log("[$tag] → RLY 113")
+                log("[$tag] [SHOHAM-ISOLATION] test=${ClockLab.isolationTest} → RLY 113; frame requests follow")
                 sendReqBase(out, 113, null)
             }
             114 -> { // REQ_RV_DATA_NEXT — bike pulling a frame (data socket); send one access unit raw
+                if (ClockLab.isolationTest == 13) {
+                    if (framesSent == 0) log("[SHOHAM-ISOLATION] TEST 13: REQ 114 blocked after RLY 113; no video frames")
+                    return
+                }
+                if (ClockLab.isolationTest == 14 && framesSent >= 1) {
+                    if (framesSent == 1) log("[SHOHAM-ISOLATION] TEST 14: one frame sent; subsequent frames blocked")
+                    return
+                }
+                if (ClockLab.isolationTest == 15 && framesSent >= 10) {
+                    if (framesSent == 10) log("[SHOHAM-ISOLATION] TEST 15: ten frames sent; subsequent frames blocked")
+                    return
+                }
                 if (ClockLab.isolationTest == 9) {
                     if (framesSent == 0) log("[SHOHAM-ISOLATION] TEST 9: blocking video frames; PXC/media control active")
                     return
