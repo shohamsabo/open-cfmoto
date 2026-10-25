@@ -114,6 +114,7 @@ class MainActivity : AppCompatActivity() {
      *  which must be set before AA starts. CLIENT_INFO refines it later during the PXC handshake. */
     private fun applyProfile(qr: QrData) {
         AppSettings.applyToHolder(this)
+        ClockLab.isolationTest = AppSettings.isolationTest(this)
         BikeProfileHolder.active = BikeProfiles.selectByQr(qr, this)
         DashMemory.setLastDashTouch(this, BikeProfileHolder.advertisesScreenTouch)
         val userOverride = VideoPrefs.resolutionOverride(this, BikeProfileHolder.active)
