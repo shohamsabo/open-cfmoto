@@ -1593,6 +1593,25 @@
                         android:text="@string/setup_clock_lab_timesync_phone" />
                 </LinearLayout>
 
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/voge_sync_no_ack"
+                    style="@style/Widget.OpenCfMoto.Segment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="0x10600: No reply (time sync)" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/voge_suppress_10630"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Voge experiment: suppress 0x10631 reply" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/voge_suppress_10740"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Voge experiment: suppress 0x10740 handling" />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
