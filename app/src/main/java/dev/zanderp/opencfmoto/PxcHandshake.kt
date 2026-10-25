@@ -77,8 +77,7 @@ class PxcHandshake(
                 else onHuTimeSync(tag, frame, out)
             }
             PxcFrame.CMD_HU_QUERY_TIME -> {
-                if (ClockLab.query == ClockQueryMode.NO_ACK) onHuQueryTime(tag, frame, out)
-                else onHuQueryTime(tag, frame, out)
+                onHuQueryTime(tag, frame, out)
             }
             else -> {
                 if ((frame.cmd == 0x10630 && ClockLab.suppress10630) ||
@@ -158,8 +157,12 @@ class PxcHandshake(
         log("[$tag] carHuid=$carHuid HUName=${json.optString("HUName")} channel=${json.optString("channel")}")
         logClockLabBanner()
 
-        profile = BikeProfiles.select(json, log)
         val early = BikeProfileHolder.active
+        val selected = BikeProfiles.select(json, log)
+        profile = if (ClockLab.freezeQrProfile) {
+            log("[$tag] [VOGE-LAB] QR profile frozen: keeping ${early.name}, ignoring CLIENT_INFO choice ${selected.name}")
+            early
+        } else selected
         val startedSpec = BikeProfileHolder.aaVideo  // what Android Auto actually started / negotiated with
         // Keep a measured landscape panel (e.g. 800MT 1280×576) when CLIENT_INFO scoring would
         // flip to the near-square 800NK Advanced profile — that mis-route resized touch/margins
