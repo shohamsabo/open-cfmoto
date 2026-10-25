@@ -1607,6 +1607,12 @@
                     android:text="Voge experiment: suppress 0x10631 reply" />
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/voge_freeze_qr_profile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Voge experiment: keep QR profile (no CLIENT_INFO switch)" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/voge_suppress_10740"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
