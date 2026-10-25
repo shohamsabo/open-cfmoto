@@ -804,6 +804,14 @@ class EasyConnProber(
                 sendReqBase(out, 113, null)
             }
             114 -> { // REQ_RV_DATA_NEXT — bike pulling a frame (data socket); send one access unit raw
+                if (ClockLab.isolationTest == 9) {
+                    if (framesSent == 0) log("[SHOHAM-ISOLATION] TEST 9: blocking video frames; PXC/media control active")
+                    return
+                }
+                if (ClockLab.isolationTest == 10 && android.os.SystemClock.elapsedRealtime() - ClockLab.isolationStartMs < 15000L) {
+                    if (framesSent == 0) log("[SHOHAM-ISOLATION] TEST 10: holding video frames until 15s after start")
+                    return
+                }
                 val frame = video?.pollFrame(1500)
                 if (frame == null) {
                     log("[$tag] REQ_RV_DATA_NEXT(114): no frame ready")
