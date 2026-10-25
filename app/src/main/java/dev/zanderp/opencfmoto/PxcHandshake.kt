@@ -80,8 +80,8 @@ class PxcHandshake(
                 onHuQueryTime(tag, frame, out)
             }
             else -> {
-                if ((frame.cmd == 0x10630 && ClockLab.suppress10630) ||
-                    (frame.cmd == 0x10740 && ClockLab.suppress10740)) {
+                if ((frame.cmd == 0x10630 && (ClockLab.suppress10630 || ClockLab.isolationTest == 11)) ||
+                    (frame.cmd == 0x10740 && (ClockLab.suppress10740 || ClockLab.isolationTest == 11))) {
                     log("[$tag] [VOGE-LAB] RX 0x${frame.cmd.toString(16)} len=${frame.payload.size}; response suppressed")
                     return
                 }
