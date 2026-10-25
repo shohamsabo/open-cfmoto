@@ -44,6 +44,8 @@ object BikeLink {
     fun beginHandoff(context: Context? = null) {
         if (context != null) appContext = context.applicationContext
         aaVideoSteady = false
+        ClockLab.isolationStartMs = android.os.SystemClock.elapsedRealtime()
+        LogBus.log("[SHOHAM-ISOLATION] test=${ClockLab.isolationTest} begin")
         bikeNetwork = null
         networkReady = false
         proberStarted = false
@@ -89,6 +91,11 @@ object BikeLink {
 
     private fun maybeStartProbe() {
         if (proberStarted || !aaVideoSteady || !networkReady) return
+        if (ClockLab.isolationTest == 8) {
+            proberStarted = true
+            LogBus.log("[SHOHAM-ISOLATION] TEST 8: bike Wi-Fi ready, PXC intentionally NOT started")
+            return
+        }
         val p = prober ?: return
         proberStarted = true
         appContext?.let { ctx ->
