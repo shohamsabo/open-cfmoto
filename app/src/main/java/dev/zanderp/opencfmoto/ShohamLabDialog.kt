@@ -14,6 +14,7 @@ object ShohamLabDialog {
             "Keep QR profile (no CLIENT_INFO switch)",
             "Bluetooth clock listener",
             "Keep bike Wi-Fi",
+            "Connection Isolation (tests 8–12)",
             "Reset all experiments"
         )
         fun summary(): Array<String> = arrayOf(
@@ -24,7 +25,8 @@ object ShohamLabDialog {
             "${entries[4]}: ${if (AppSettings.freezeQrProfile(context)) "ON" else "OFF"}",
             "${entries[5]}: ${if (AppSettings.bluetoothClockSync(context)) "ON" else "OFF"}",
             "${entries[6]}: ${if (AppSettings.keepWifiAfterDisconnect(context)) "ON" else "OFF"}",
-            entries[7]
+            "${entries[7]}: ${if (AppSettings.isolationTest(context) == 0) "Normal" else "Test ${AppSettings.isolationTest(context)}"}",
+            entries[8]
         )
         val dialog = AlertDialog.Builder(context)
             .setTitle("Shoham Lab — הגדרות ניסוי")
@@ -41,9 +43,22 @@ object ShohamLabDialog {
                     4 -> { AppSettings.setFreezeQrProfile(context, !AppSettings.freezeQrProfile(context)); show(context) }
                     5 -> { AppSettings.setBluetoothClockSync(context, !AppSettings.bluetoothClockSync(context)); show(context) }
                     6 -> { AppSettings.setKeepWifiAfterDisconnect(context, !AppSettings.keepWifiAfterDisconnect(context)); show(context) }
-                    7 -> AlertDialog.Builder(context).setTitle("Reset Shoham Lab?")
+                    7 -> choose(context, "Connection Isolation — choose one test", arrayOf(
+                        "Normal (no isolation)",
+                        "8 — AA + Wi-Fi only; no PXC connection",
+                        "9 — PXC + media control; no video frames",
+                        "10 — Delay first video frames by 15 seconds",
+                        "11 — Video ON; suppress optional 10630/10740 replies",
+                        "12 — Normal projection; timestamped baseline"
+                    )) {
+                        val test = if (it == 0) 0 else it + 7
+                        AppSettings.setIsolationTest(context, test)
+                        LogBus.log("[SHOHAM-ISOLATION] selected test=$test (reconnect required)")
+                    }
+                    8 -> AlertDialog.Builder(context).setTitle("Reset Shoham Lab?")
                         .setMessage("Restore the baseline experimental settings?")
                         .setPositiveButton("Reset") { _, _ ->
+                            AppSettings.setIsolationTest(context, 0)
                             AppSettings.setClockLabQuery(context, ClockQueryMode.EMPTY)
                             AppSettings.setClockLabTimeSync(context, ClockTimeSyncMode.ECHO)
                             AppSettings.setSuppress10630(context, false)
