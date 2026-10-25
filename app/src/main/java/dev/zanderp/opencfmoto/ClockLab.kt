@@ -50,6 +50,9 @@ object ClockLab {
     @Volatile var suppress10630: Boolean = false
     @Volatile var suppress10740: Boolean = false
     @Volatile var freezeQrProfile: Boolean = false
+    /** 0=normal, 8=Wi-Fi only, 9=PXC no frames, 10=15s frame delay, 11=limited optional control, 12=normal trace. */
+    @Volatile var isolationTest: Int = 0
+    @Volatile var isolationStartMs: Long = 0L
 
     fun applyFrom(
         query: ClockQueryMode,
@@ -91,6 +94,6 @@ object ClockLab {
         val ch = channel?.trim().orEmpty().ifEmpty { "-" }
         val bt = if (bluetooth) "on" else "off"
         val kw = if (keepWifi) "on" else "off"
-        return "[CLOCK-LAB] query=${query.id} timeSync=${timeSync.id} bt=$bt keepWifi=$kw suppress10630=$suppress10630 suppress10740=$suppress10740 channel=$ch"
+        return "[CLOCK-LAB] query=${query.id} timeSync=${timeSync.id} bt=$bt keepWifi=$kw suppress10630=$suppress10630 suppress10740=$suppress10740 isolationTest=$isolationTest channel=$ch"
     }
 }
