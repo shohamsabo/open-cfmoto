@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - experiment/voge-preserve-clock
+      - experiment/voge-clock-diagnostics
 
 jobs:
   build:
@@ -30,5 +30,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: OpenCFMoto-Voge-Clock-Test
+          name: OpenCFMoto-Voge-Hour-Isolation
           path: app/build/outputs/apk/debug/*.apk
