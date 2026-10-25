@@ -24,6 +24,7 @@ enum class ClockQueryMode(val id: String) {
 enum class ClockTimeSyncMode(val id: String) {
     ECHO("echo"),
     PHONE("phone"),
+    NO_ACK("no_ack"),
     ;
 
     companion object {
@@ -46,6 +47,8 @@ object ClockLab {
     @Volatile var bluetooth: Boolean = false
     /** Stay associated after Stop — some dashes drop the clock when SoftAP/P2P dies. */
     @Volatile var keepWifi: Boolean = false
+    @Volatile var suppress10630: Boolean = false
+    @Volatile var suppress10740: Boolean = false
 
     fun applyFrom(
         query: ClockQueryMode,
@@ -87,6 +90,6 @@ object ClockLab {
         val ch = channel?.trim().orEmpty().ifEmpty { "-" }
         val bt = if (bluetooth) "on" else "off"
         val kw = if (keepWifi) "on" else "off"
-        return "[CLOCK-LAB] query=${query.id} timeSync=${timeSync.id} bt=$bt keepWifi=$kw channel=$ch"
+        return "[CLOCK-LAB] query=${query.id} timeSync=${timeSync.id} bt=$bt keepWifi=$kw suppress10630=$suppress10630 suppress10740=$suppress10740 channel=$ch"
     }
 }
