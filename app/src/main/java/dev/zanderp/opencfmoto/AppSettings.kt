@@ -34,6 +34,13 @@ object AppSettings {
     private const val KEY_SUPPRESS_10630 = "voge_lab_suppress_10630"
     private const val KEY_SUPPRESS_10740 = "voge_lab_suppress_10740"
     private const val KEY_FREEZE_QR_PROFILE = "voge_lab_freeze_qr_profile"
+    private const val KEY_ISOLATION_TEST = "shoham_isolation_test"
+    fun isolationTest(ctx: Context): Int = prefs(ctx).getInt(KEY_ISOLATION_TEST, 0)
+    fun setIsolationTest(ctx: Context, test: Int) {
+        require(test == 0 || test in 8..12)
+        prefs(ctx).edit().putInt(KEY_ISOLATION_TEST, test).apply()
+        ClockLab.isolationTest = test
+    }
     private const val KEY_KEEP_WIFI = "keep_wifi_after_disconnect"
     private const val KEY_BT_TRIGGER_MAC = "bt_trigger_mac"
     private const val KEY_BT_TRIGGER_NAME = "bt_trigger_name"
