@@ -14,7 +14,7 @@ object ShohamLabDialog {
             "Keep QR profile (no CLIENT_INFO switch)",
             "Bluetooth clock listener",
             "Keep bike Wi-Fi",
-            "Connection Isolation (tests 8–12)",
+            "Connection Isolation (tests 8–16)",
             "Reset all experiments"
         )
         fun summary(): Array<String> = arrayOf(
@@ -49,7 +49,11 @@ object ShohamLabDialog {
                         "9 — PXC + media control; no video frames",
                         "10 — Delay first video frames by 15 seconds",
                         "11 — Video ON; suppress optional 10630/10740 replies",
-                        "12 — Normal projection; timestamped baseline"
+                        "12 — Normal projection; timestamped baseline",
+                        "13 — RLY 113; zero video frames",
+                        "14 — Send one video frame only",
+                        "15 — Send ten video frames only",
+                        "16 — Normal video; suppress optional control after first frame"
                     )) {
                         val test = if (it == 0) 0 else it + 7
                         AppSettings.setIsolationTest(context, test)
