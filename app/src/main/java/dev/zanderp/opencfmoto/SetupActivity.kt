@@ -187,6 +187,10 @@ class SetupActivity : AppCompatActivity() {
             isChecked = AppSettings.suppress10630(this@SetupActivity)
             setOnCheckedChangeListener { _, checked -> AppSettings.setSuppress10630(this@SetupActivity, checked) }
         }
+        findViewById<SwitchMaterial>(R.id.voge_freeze_qr_profile).apply {
+            isChecked = AppSettings.freezeQrProfile(this@SetupActivity)
+            setOnCheckedChangeListener { _, checked -> AppSettings.setFreezeQrProfile(this@SetupActivity, checked) }
+        }
         findViewById<SwitchMaterial>(R.id.voge_suppress_10740).apply {
             isChecked = AppSettings.suppress10740(this@SetupActivity)
             setOnCheckedChangeListener { _, checked -> AppSettings.setSuppress10740(this@SetupActivity, checked) }
