@@ -143,6 +143,7 @@ class EasyConnProber(
         probed = false
         framesSent = 0
         isolationFirstFrameRequestMs = 0L
+        ShohamIsolation.firstFrameSent = false
         lastFrameAt = 0L
         everConnected = false
         reconnectAttempts = 0
@@ -833,6 +834,7 @@ class EasyConnProber(
                 } else {
                     sendFrameRaw(out, frame)
                     framesSent++
+                    if (framesSent == 1) ShohamIsolation.firstFrameSent = true
                     lastFrameAt = System.currentTimeMillis()
                     if (framesSent == 1) ConnectionState.set(Phase.STREAMING)
                     if (framesSent <= 5 || framesSent % 60 == 0)
