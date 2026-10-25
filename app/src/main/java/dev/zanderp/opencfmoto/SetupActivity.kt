@@ -19,6 +19,7 @@ import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.switchmaterial.SwitchMaterial
 import java.io.File
 
 /**
@@ -178,6 +179,17 @@ class SetupActivity : AppCompatActivity() {
         }
         findViewById<MaterialButton>(R.id.clocklab_sync_phone).setOnClickListener {
             setClockLabTimeSync(ClockTimeSyncMode.PHONE)
+        }
+        findViewById<MaterialButton>(R.id.voge_sync_no_ack).setOnClickListener {
+            setClockLabTimeSync(ClockTimeSyncMode.NO_ACK)
+        }
+        findViewById<SwitchMaterial>(R.id.voge_suppress_10630).apply {
+            isChecked = AppSettings.suppress10630(this@SetupActivity)
+            setOnCheckedChangeListener { _, checked -> AppSettings.setSuppress10630(this@SetupActivity, checked) }
+        }
+        findViewById<SwitchMaterial>(R.id.voge_suppress_10740).apply {
+            isChecked = AppSettings.suppress10740(this@SetupActivity)
+            setOnCheckedChangeListener { _, checked -> AppSettings.setSuppress10740(this@SetupActivity, checked) }
         }
         findViewById<MaterialButton>(R.id.keepwifi_on).setOnClickListener { setKeepWifi(true) }
         findViewById<MaterialButton>(R.id.keepwifi_off).setOnClickListener { setKeepWifi(false) }
@@ -572,7 +584,8 @@ class SetupActivity : AppCompatActivity() {
             R.id.clocklab_query_none to ClockQueryMode.NO_ACK)
         highlight(AppSettings.clockLabTimeSync(this),
             R.id.clocklab_sync_echo to ClockTimeSyncMode.ECHO,
-            R.id.clocklab_sync_phone to ClockTimeSyncMode.PHONE)
+            R.id.clocklab_sync_phone to ClockTimeSyncMode.PHONE,
+            R.id.voge_sync_no_ack to ClockTimeSyncMode.NO_ACK)
         highlight(ClockLab.matchingPreset(),
             R.id.clocklab_preset_latest to ClockLabPreset.LATEST,
             R.id.clocklab_preset_2012 to ClockLabPreset.V2012,
