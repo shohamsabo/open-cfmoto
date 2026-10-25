@@ -20,6 +20,9 @@ import java.util.UUID
 class PxcHandshake(
     private val log: (String) -> Unit,
 ) {
+    // Voge clock isolation build: intentionally do not reply to time requests.
+    // This isolates time responses while preserving PXC channel setup and AA media.
+    private val isolateClockReplies = true
     private val phoneUuid: String = UUID.randomUUID().toString()
     @Volatile var carHuid: String? = null
         private set
@@ -71,7 +74,14 @@ class PxcHandshake(
             // First-class: never empty-ack 0x10600 (→ 1970 / 00:00 on Morini/Voge/QJ).
             // Echo-only (2.0.10): do not push an unsolicited 0x10601 — Griffin / X-Cape / Voge
             // ignore it or jump hours. 0x10450 stays on the profile unknown path (empty cmd+1).
-            PxcFrame.CMD_HU_TIME_SYNC -> onHuTimeSync(tag, frame, out)
+            PxcFrame.CMD_HU_TIME_SYNC -> {
+                if (isolateClockReplies) log("[$tag] [VOGE-CLOCK-ISOLATION] suppressed 0x10601; incoming 0x10600 len=${frame.payload.size}")
+                else onHuTimeSync(tag, frame, out)
+            }
+            PxcFrame.CMD_HU_QUERY_TIME -> {
+                if (isolateClockReplies) log("[$tag] [VOGE-CLOCK-ISOLATION] suppressed 0x10451; incoming 0x10450 len=${frame.payload.size}")
+                else PxcFrame(PxcFrame.CMD_HU_QUERY_TIME_ACK, ByteArray(0)).write(out)
+            }
             else -> {
                 if (!profile.handleUnknownControl(tag, frame, out, log)) {
                     log("[$tag] cmd=0x${frame.cmd.toUInt().toString(16)} (${PxcFrame.nameOf(frame.cmd)}) " +
