@@ -33,6 +33,7 @@ object AppSettings {
     private const val KEY_CLOCK_LAB_TIMESYNC = "clock_lab_timesync"
     private const val KEY_SUPPRESS_10630 = "voge_lab_suppress_10630"
     private const val KEY_SUPPRESS_10740 = "voge_lab_suppress_10740"
+    private const val KEY_FREEZE_QR_PROFILE = "voge_lab_freeze_qr_profile"
     private const val KEY_KEEP_WIFI = "keep_wifi_after_disconnect"
     private const val KEY_BT_TRIGGER_MAC = "bt_trigger_mac"
     private const val KEY_BT_TRIGGER_NAME = "bt_trigger_name"
@@ -109,6 +110,11 @@ object AppSettings {
         ClockLab.timeSync = mode
     }
 
+    fun freezeQrProfile(ctx: Context) = prefs(ctx).getBoolean(KEY_FREEZE_QR_PROFILE, false)
+    fun setFreezeQrProfile(ctx: Context, value: Boolean) {
+        prefs(ctx).edit().putBoolean(KEY_FREEZE_QR_PROFILE, value).apply()
+        ClockLab.freezeQrProfile = value
+    }
     fun suppress10630(ctx: Context) = prefs(ctx).getBoolean(KEY_SUPPRESS_10630, false)
     fun suppress10740(ctx: Context) = prefs(ctx).getBoolean(KEY_SUPPRESS_10740, false)
     fun setSuppress10630(ctx: Context, value: Boolean) {
@@ -171,6 +177,7 @@ object AppSettings {
         ProfilePrefs.applyToHolder(ctx)
         ButtonMap.ensureDefaultsMigrated(ctx)
         ScreenMargins.load(ctx)
+        ClockLab.freezeQrProfile = freezeQrProfile(ctx)
         ClockLab.suppress10630 = suppress10630(ctx)
         ClockLab.suppress10740 = suppress10740(ctx)
         ClockLab.applyFrom(
