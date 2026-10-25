@@ -49,6 +49,7 @@ object ClockLab {
     @Volatile var keepWifi: Boolean = false
     @Volatile var suppress10630: Boolean = false
     @Volatile var suppress10740: Boolean = false
+    @Volatile var freezeQrProfile: Boolean = false
 
     fun applyFrom(
         query: ClockQueryMode,
