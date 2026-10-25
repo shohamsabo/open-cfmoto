@@ -87,6 +87,7 @@ class EasyConnProber(
     @Volatile private var ownsVideo = false
     @Volatile private var negW = 800
     @Volatile private var negH = 384
+    @Volatile private var isolationFirstFrameRequestMs = 0L
     @Volatile private var framesSent = 0
     @Volatile private var lastFrameAt = 0L
     /** SoftAP Yunmo path (MOTOMORINI / X-Cape 1200) when EasyConn never answers. */
@@ -141,6 +142,7 @@ class EasyConnProber(
         }
         probed = false
         framesSent = 0
+        isolationFirstFrameRequestMs = 0L
         lastFrameAt = 0L
         everConnected = false
         reconnectAttempts = 0
@@ -808,7 +810,8 @@ class EasyConnProber(
                     if (framesSent == 0) log("[SHOHAM-ISOLATION] TEST 9: blocking video frames; PXC/media control active")
                     return
                 }
-                if (ClockLab.isolationTest == 10 && android.os.SystemClock.elapsedRealtime() - ClockLab.isolationStartMs < 15000L) {
+                if (isolationFirstFrameRequestMs == 0L) isolationFirstFrameRequestMs = android.os.SystemClock.elapsedRealtime()
+                if (ClockLab.isolationTest == 10 && android.os.SystemClock.elapsedRealtime() - isolationFirstFrameRequestMs < 15000L) {
                     if (framesSent == 0) log("[SHOHAM-ISOLATION] TEST 10: holding video frames until 15s after start")
                     return
                 }
