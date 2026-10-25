@@ -80,8 +80,8 @@ class PxcHandshake(
                 onHuQueryTime(tag, frame, out)
             }
             else -> {
-                if ((frame.cmd == 0x10630 && (ClockLab.suppress10630 || ClockLab.isolationTest == 11)) ||
-                    (frame.cmd == 0x10740 && (ClockLab.suppress10740 || ClockLab.isolationTest == 11))) {
+                if ((frame.cmd == 0x10630 && (ClockLab.suppress10630 || ClockLab.isolationTest == 11 || (ClockLab.isolationTest == 16 && dev.zanderp.opencfmoto.ShohamIsolation.firstFrameSent))) ||
+                    (frame.cmd == 0x10740 && (ClockLab.suppress10740 || ClockLab.isolationTest == 11 || (ClockLab.isolationTest == 16 && dev.zanderp.opencfmoto.ShohamIsolation.firstFrameSent)))) {
                     log("[$tag] [VOGE-LAB] RX 0x${frame.cmd.toString(16)} len=${frame.payload.size}; response suppressed")
                     return
                 }
