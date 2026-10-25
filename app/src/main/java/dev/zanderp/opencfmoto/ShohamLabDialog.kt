@@ -28,7 +28,6 @@ object ShohamLabDialog {
         )
         val dialog = AlertDialog.Builder(context)
             .setTitle("Shoham Lab — הגדרות ניסוי")
-            .setMessage("הגדרות ניסוי בלבד. בצע חיבור מחדש אחרי כל שינוי; בדיקות רק כשהאופנוע עומד.")
             .setItems(summary()) { _, index ->
                 when (index) {
                     0 -> choose(context, "0x10450", arrayOf("Empty ack", "Carbit", "Zontes", "No reply")) {
