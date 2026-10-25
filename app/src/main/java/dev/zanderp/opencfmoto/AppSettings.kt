@@ -31,6 +31,8 @@ object AppSettings {
     private const val KEY_BT_CLOCK = "bluetooth_clock_sync"
     private const val KEY_CLOCK_LAB_QUERY = "clock_lab_query"
     private const val KEY_CLOCK_LAB_TIMESYNC = "clock_lab_timesync"
+    private const val KEY_SUPPRESS_10630 = "voge_lab_suppress_10630"
+    private const val KEY_SUPPRESS_10740 = "voge_lab_suppress_10740"
     private const val KEY_KEEP_WIFI = "keep_wifi_after_disconnect"
     private const val KEY_BT_TRIGGER_MAC = "bt_trigger_mac"
     private const val KEY_BT_TRIGGER_NAME = "bt_trigger_name"
@@ -107,6 +109,17 @@ object AppSettings {
         ClockLab.timeSync = mode
     }
 
+    fun suppress10630(ctx: Context) = prefs(ctx).getBoolean(KEY_SUPPRESS_10630, false)
+    fun suppress10740(ctx: Context) = prefs(ctx).getBoolean(KEY_SUPPRESS_10740, false)
+    fun setSuppress10630(ctx: Context, value: Boolean) {
+        prefs(ctx).edit().putBoolean(KEY_SUPPRESS_10630, value).apply()
+        ClockLab.suppress10630 = value
+    }
+    fun setSuppress10740(ctx: Context, value: Boolean) {
+        prefs(ctx).edit().putBoolean(KEY_SUPPRESS_10740, value).apply()
+        ClockLab.suppress10740 = value
+    }
+
     fun applyClockLabPreset(ctx: Context, preset: ClockLabPreset) {
         ClockLab.applyPreset(preset)
         prefs(ctx).edit()
@@ -158,6 +171,8 @@ object AppSettings {
         ProfilePrefs.applyToHolder(ctx)
         ButtonMap.ensureDefaultsMigrated(ctx)
         ScreenMargins.load(ctx)
+        ClockLab.suppress10630 = suppress10630(ctx)
+        ClockLab.suppress10740 = suppress10740(ctx)
         ClockLab.applyFrom(
             clockLabQuery(ctx),
             clockLabTimeSync(ctx),
