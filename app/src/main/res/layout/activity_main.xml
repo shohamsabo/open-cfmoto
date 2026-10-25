@@ -290,6 +290,16 @@
                         app:iconSize="18dp" />
 
                     <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_shoham_lab"
+                        style="@style/Widget.OpenCfMoto.Button.Text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:text="Shoham Lab" />
+
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_toggle_log"
                         style="@style/Widget.OpenCfMoto.Button.Text"
                         android:layout_width="0dp"
