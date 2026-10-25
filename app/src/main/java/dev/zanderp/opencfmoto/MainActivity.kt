@@ -469,6 +469,8 @@ class MainActivity : AppCompatActivity() {
         (findViewById<View>(R.id.btn_devices) as? MaterialButton)?.asFooterLink(R.drawable.ic_devices)
         (findViewById<View>(R.id.btn_trip) as? MaterialButton)?.asFooterLink(R.drawable.ic_ride)
         (toggleLogBtn as? MaterialButton)?.asFooterLink(R.drawable.ic_logs)
+        (findViewById<View>(R.id.btn_shoham_lab) as? MaterialButton)?.asFooterLink(R.drawable.ic_settings)
+        findViewById<View>(R.id.btn_shoham_lab).setOnClickListener { ShohamLabDialog.show(this) }
 
         // All components (bike PXC, Android Auto receiver, video pipeline — including those
         // running in the foreground service) log through LogBus; mirror it into the view.
